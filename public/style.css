@@ -161,7 +161,7 @@ main {
   border: 2px solid #334155;
   border-radius: 6px;
   overflow: hidden;
-  /* 横向纸张比例：宽 = 2 × 高（A4 竖版小册子 -> A3 横向） */
+  /* 默认横向纸张比例（A4 竖版小册子 -> A3 横向）；实际比例由 JS 按统一面板尺寸覆盖 */
   aspect-ratio: 2 / 1;
 }
 .panel {

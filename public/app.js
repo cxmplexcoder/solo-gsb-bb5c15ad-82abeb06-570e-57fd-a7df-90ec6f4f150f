@@ -118,15 +118,36 @@ downloadBtn.addEventListener('click', () => {
   a.remove();
 });
 
+const ORIENTATION_LABELS = {
+  portrait: '竖版',
+  landscape: '横版',
+  square: '方形',
+};
+
+function ptToMm(pt) {
+  return ((pt * 25.4) / 72).toFixed(1);
+}
+
 function renderSummary(plan) {
   document.getElementById('sum-source').textContent = plan.sourceCount;
   document.getElementById('sum-blanks').textContent = plan.paddedCount;
   document.getElementById('sum-sheets').textContent = plan.sheets.length;
+  if (plan.panel) {
+    const { width, height, orientation } = plan.panel;
+    document.getElementById('sum-panel').textContent =
+      `${width.toFixed(1)} × ${height.toFixed(1)} pt（约 ${ptToMm(width)} × ${ptToMm(height)} mm）`;
+    document.getElementById('sum-orient').textContent =
+      ORIENTATION_LABELS[orientation] || orientation;
+  }
   summaryEl.hidden = false;
 }
 
 function renderPreview(plan) {
   const frag = document.createDocumentFragment();
+  // 预览按真实纸张比例渲染：宽 = 2 × 面板宽，高 = 面板高
+  const sheetRatio = plan.panel && plan.panel.height > 0
+    ? (2 * plan.panel.width) / plan.panel.height
+    : 2;
 
   for (const sheet of plan.sheets) {
     const card = document.createElement('div');
@@ -137,8 +158,8 @@ function renderPreview(plan) {
     title.textContent = `第 ${sheet.sheet} 张纸 / 共 ${plan.sheets.length} 张`;
     card.appendChild(title);
 
-    card.appendChild(buildSide('正面', sheet.front, false));
-    card.appendChild(buildSide('背面', sheet.back, true));
+    card.appendChild(buildSide('正面', sheet.front, false, sheetRatio));
+    card.appendChild(buildSide('背面', sheet.back, true, sheetRatio));
 
     frag.appendChild(card);
   }
@@ -146,7 +167,7 @@ function renderPreview(plan) {
   previewEl.hidden = false;
 }
 
-function buildSide(labelText, side, isBack) {
+function buildSide(labelText, side, isBack, sheetRatio) {
   const sideEl = document.createElement('div');
   sideEl.className = 'side';
 
@@ -157,6 +178,7 @@ function buildSide(labelText, side, isBack) {
 
   const spread = document.createElement('div');
   spread.className = 'spread';
+  spread.style.aspectRatio = String(sheetRatio);
   spread.appendChild(buildPanel(side.left, 'left'));
   spread.appendChild(buildPanel(side.right, 'right'));
 
