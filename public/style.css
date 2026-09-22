@@ -116,6 +116,15 @@ main {
   padding: 10px 14px;
   font-size: 14px;
 }
+.mixed-hint {
+  margin: 12px 0 0;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+}
 
 .legend { display: flex; gap: 18px; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
 .legend-item { display: inline-flex; align-items: center; gap: 6px; }
@@ -161,8 +170,9 @@ main {
   border: 2px solid #334155;
   border-radius: 6px;
   overflow: hidden;
-  /* 横向纸张比例：宽 = 2 × 高（A4 竖版小册子 -> A3 横向） */
-  aspect-ratio: 2 / 1;
+  /* 横向纸张比例：宽 = 2 × 面板宽（A4 竖版小册子 -> A3 横向）；
+     混合尺寸时由 JS 按实际统一面板尺寸覆盖 --spread-ratio */
+  aspect-ratio: var(--spread-ratio, 2) / 1;
 }
 .panel {
   display: flex;

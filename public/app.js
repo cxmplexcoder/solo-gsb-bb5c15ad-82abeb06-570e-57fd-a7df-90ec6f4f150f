@@ -27,6 +27,7 @@ function clearResult() {
   summaryEl.hidden = true;
   previewEl.hidden = true;
   sheetsEl.innerHTML = '';
+  sheetsEl.style.removeProperty('--spread-ratio');
 }
 
 fileInput.addEventListener('change', () => {
@@ -122,7 +123,34 @@ function renderSummary(plan) {
   document.getElementById('sum-source').textContent = plan.sourceCount;
   document.getElementById('sum-blanks').textContent = plan.paddedCount;
   document.getElementById('sum-sheets').textContent = plan.sheets.length;
+
+  const panel = plan.panel;
+  const mixedEl = document.getElementById('sum-mixed');
+  if (panel) {
+    document.getElementById('sum-panel').textContent =
+      `${formatMm(panel.widthMm)} × ${formatMm(panel.heightMm)} mm`
+      + `（${Math.round(panel.width)} × ${Math.round(panel.height)} pt）`;
+    document.getElementById('sum-orientation').textContent = ORIENTATION_LABELS[panel.orientation] || panel.orientation;
+    document.getElementById('sum-sheet-size').textContent =
+      `${formatMm(panel.widthMm * 2)} × ${formatMm(panel.heightMm)} mm（横向，每张纸）`;
+    mixedEl.hidden = !panel.mixedSize;
+  } else {
+    document.getElementById('sum-panel').textContent = '-';
+    document.getElementById('sum-orientation').textContent = '-';
+    document.getElementById('sum-sheet-size').textContent = '-';
+    mixedEl.hidden = true;
+  }
   summaryEl.hidden = false;
+}
+
+const ORIENTATION_LABELS = {
+  portrait: '竖向（Portrait）',
+  landscape: '横向（Landscape）',
+  square: '正方形（Square）',
+};
+
+function formatMm(value) {
+  return (Math.round(value * 10) / 10).toFixed(1);
 }
 
 function renderPreview(plan) {
@@ -141,6 +169,13 @@ function renderPreview(plan) {
     card.appendChild(buildSide('背面', sheet.back, true));
 
     frag.appendChild(card);
+  }
+  // 预览框比例跟随实际纸张（宽 = 2 × 面板宽，高 = 面板高）
+  if (plan.panel && plan.panel.height > 0) {
+    sheetsEl.style.setProperty(
+      '--spread-ratio',
+      String((plan.panel.width * 2) / plan.panel.height),
+    );
   }
   sheetsEl.appendChild(frag);
   previewEl.hidden = false;

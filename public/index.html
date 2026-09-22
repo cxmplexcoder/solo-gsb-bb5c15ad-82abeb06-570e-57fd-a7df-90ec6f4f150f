@@ -9,7 +9,7 @@
 <body>
   <header class="site-header">
     <h1>骑马钉小册子拼版</h1>
-    <p class="subtitle">每张纸 4 页 · 自动补空白页 · 输出保持原页面尺寸</p>
+    <p class="subtitle">每张纸 4 页 · 自动补空白页 · 混合尺寸按统一面板居中适配</p>
   </header>
 
   <main>
@@ -30,7 +30,14 @@
         <li>原始页数：<strong id="sum-source">-</strong> 页</li>
         <li>末尾补白：<strong id="sum-blanks">-</strong> 页</li>
         <li>用纸数量：<strong id="sum-sheets">-</strong> 张（每张正反 4 页）</li>
+        <li>统一面板尺寸：<strong id="sum-panel">-</strong></li>
+        <li>面板方向：<strong id="sum-orientation">-</strong></li>
+        <li>输出纸张尺寸：<strong id="sum-sheet-size">-</strong></li>
       </ul>
+      <p id="sum-mixed" class="mixed-hint" hidden>
+        检测到源 PDF 各页尺寸或旋转方向不一致：已按全部页面旋转后宽高的最大值确定统一面板，
+        每页保持原尺寸 1:1 居中放入对应半区，空余区域留白，页序与补白规则不变。
+      </p>
       <button id="download-btn" class="btn success">下载拼版 PDF</button>
     </section>
 
